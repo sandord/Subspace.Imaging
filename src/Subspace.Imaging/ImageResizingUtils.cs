@@ -13,13 +13,11 @@ namespace Subspace.Imaging
     using System.IO;
 
     /// <summary>
-    ///     Provides imaging utility methods.
+    ///     Provides image resizing utility methods.
     /// </summary>
     public static class ImageResizingUtils
     {
         private const string ArgumentOutOfRangeException_MustEqualOneOrLarger = "Must be equal to or larger than 1.";
-        private const string ArgumentException_PathDoesNotExist = "The path does not exist.";
-        private const string ArgumentException_CannotBeNullOrEmptyOrWhitespaceOnlyString = "Cannot be null, nor empty nor a string consisting only of whitespace characters.";
 
         /// <summary>
         ///     Gets a thumbnail image that represents the specified <paramref name="image"/>.
@@ -30,9 +28,9 @@ namespace Subspace.Imaging
         /// <returns>The thumbnail image.</returns>
         public static Image GetThumbnail(Image image, int width, int height)
         {
-            Require<ArgumentNullException>(image != null, "image");
-            Require<ArgumentOutOfRangeException>(width > 0, "width");
-            Require<ArgumentOutOfRangeException>(height > 0, "height");
+            Check.Require<ArgumentNullException>(image != null, "image");
+            Check.Require<ArgumentOutOfRangeException>(width > 0, "width");
+            Check.Require<ArgumentOutOfRangeException>(height > 0, "height");
 
             return image.GetThumbnailImage(
                 width,
@@ -49,8 +47,8 @@ namespace Subspace.Imaging
         /// <returns>The resized <see cref="Bitmap"/>.</returns>
         public static Bitmap ResizeImage(Image image, float zoomLevel)
         {
-            Require<ArgumentNullException>(image != null, "image");
-            Require<ArgumentOutOfRangeException>(zoomLevel > 0.0f, "zoomLevel");
+            Check.Require<ArgumentNullException>(image != null, "image");
+            Check.Require<ArgumentOutOfRangeException>(zoomLevel > 0.0f, "zoomLevel");
 
             int width = (int)((float)image.Width * zoomLevel);
             int height = (int)((float)image.Height * zoomLevel);
@@ -91,8 +89,8 @@ namespace Subspace.Imaging
         /// </exception>
         public static Bitmap ResizeImage(Image image, int width, int height, ImageResizeMode resizeMode, bool keepTransparency, Color backgroundColor, Color barColor)
         {
-            Require<ArgumentNullException>(barColor != null, "barColor");
-            Require<ArgumentNullException>(backgroundColor != null, "backgroundColor");
+            Check.Require<ArgumentNullException>(barColor != null, "barColor");
+            Check.Require<ArgumentNullException>(backgroundColor != null, "backgroundColor");
 
             using (Brush backgroundBrush = new SolidBrush(backgroundColor))
             using (Brush barBrush = new SolidBrush(barColor))
@@ -120,13 +118,13 @@ namespace Subspace.Imaging
         /// </exception>
         public static Bitmap ResizeImage(Image image, int width, int height, ImageResizeMode resizeMode, bool keepTransparency, Brush backgroundBrush, Brush barBrush)
         {
-            Require<ArgumentNullException>(image != null, "image");
-            Require<ArgumentOutOfRangeException>(resizeMode == ImageResizeMode.FixHeight || width > 0, "width");
-            Require<ArgumentOutOfRangeException>(resizeMode != ImageResizeMode.FixHeight || width == 0, "width");
-            Require<ArgumentOutOfRangeException>(resizeMode == ImageResizeMode.FixWidth || height > 0, "height");
-            Require<ArgumentOutOfRangeException>(resizeMode != ImageResizeMode.FixWidth || height == 0, "height");
-            Require<ArgumentNullException>(backgroundBrush != null, "backgroundBrush");
-            Require<ArgumentNullException>(barBrush != null, "barBrush");
+            Check.Require<ArgumentNullException>(image != null, "image");
+            Check.Require<ArgumentOutOfRangeException>(resizeMode == ImageResizeMode.FixHeight || width > 0, "width");
+            Check.Require<ArgumentOutOfRangeException>(resizeMode != ImageResizeMode.FixHeight || width == 0, "width");
+            Check.Require<ArgumentOutOfRangeException>(resizeMode == ImageResizeMode.FixWidth || height > 0, "height");
+            Check.Require<ArgumentOutOfRangeException>(resizeMode != ImageResizeMode.FixWidth || height == 0, "height");
+            Check.Require<ArgumentNullException>(backgroundBrush != null, "backgroundBrush");
+            Check.Require<ArgumentNullException>(barBrush != null, "barBrush");
 
             // Imply operation flags from the specified resize mode.
             bool maintainAspectRatio = false;
@@ -299,161 +297,6 @@ namespace Subspace.Imaging
         }
 
         /// <summary>
-        ///     Rotates the specified image, keeping the dimensions of the specified image.
-        /// </summary>
-        /// <param name="image">The image.</param>
-        /// <param name="angle">The number of degrees to rotate.</param>
-        /// <param name="restrictDimensions">A value indicating whether to ensure that the dimensions of the resulting image do not exceed those of the specified image.</param>
-        /// <param name="backgroundBrush">The background brush to use when the rotation results in an image that has a different aspect ratio or <c>null</c> to refrain from drawing a background at all times.</param>
-        /// <param name="borderPen">The border pen to use when the rotation results in an image that has a different aspect ratio or <c>null</c> to refrain from drawing a border at all times.</param>
-        /// <returns>The rotated image.</returns>
-        public static Image RotateImage(Image image, float angle, bool restrictDimensions = false, Brush backgroundBrush = null, Pen borderPen = null)
-        {
-            Require<ArgumentNullException>(image != null, "image");
-            Require<ArgumentOutOfRangeException>(angle >= 0.0f && angle < 360.0f, "angle");
-
-            if (angle == 0.0f)
-            {
-                return (Image)image.Clone();
-            }
-
-            float w = image.Width;
-            float h = image.Height;
-            float x = w / 2.0f;
-            float y = h / 2.0f;
-
-            Bitmap resultBitmap = new Bitmap((int)w, (int)h);
-
-            if (restrictDimensions)
-            {
-                using (Graphics graphics = Graphics.FromImage(resultBitmap))
-                {
-                    if (backgroundBrush != null)
-                    {
-                        graphics.FillRectangle(backgroundBrush, 0.0f, 0.0f, w, h);
-                    }
-
-                    graphics.TranslateTransform(x, y);
-                    graphics.RotateTransform(angle);
-
-                    float horizontalZoom = w / graphics.VisibleClipBounds.Width;
-                    float verticalZoom = h / graphics.VisibleClipBounds.Height;
-                    float zoom = Math.Min(horizontalZoom, verticalZoom);
-
-                    graphics.ScaleTransform(zoom, zoom);
-                    graphics.TranslateTransform(-x, -y);
-                    graphics.DrawImage(image, 0.0f, 0.0f);
-
-                    if (borderPen != null && zoom != 1.0f)
-                    {
-                        graphics.DrawRectangle(borderPen, 0.0f, 0.0f, w, h);
-                    }
-                }
-            }
-            else
-            {
-                // Determine the final image size.
-                using (Graphics graphics = Graphics.FromImage(resultBitmap))
-                {
-                    graphics.TranslateTransform(x, y);
-                    graphics.RotateTransform(angle);
-
-                    resultBitmap = new Bitmap((int)graphics.VisibleClipBounds.Width, (int)graphics.VisibleClipBounds.Height);
-                    resultBitmap.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-                }
-
-                using (Graphics graphics = Graphics.FromImage(resultBitmap))
-                {
-                    float w2 = resultBitmap.Width;
-                    float h2 = resultBitmap.Height;
-                    float x2 = w2 / 2.0f;
-                    float y2 = h2 / 2.0f;
-
-                    bool matchingAspect = w == w2 && h == h2;
-
-                    if (backgroundBrush != null && !matchingAspect)
-                    {
-                        graphics.FillRectangle(backgroundBrush, 0.0f, 0.0f, w2, h2);
-                    }
-
-                    graphics.TranslateTransform(x2, y2);
-                    graphics.RotateTransform(angle);
-                    graphics.TranslateTransform(-x, -y);
-                    graphics.DrawImage(image, 0.0f, 0.0f);
-
-                    if (borderPen != null && !matchingAspect)
-                    {
-                        graphics.DrawRectangle(borderPen, 0.0f, 0.0f, w, h);
-                    }
-                }
-            }
-
-            return resultBitmap;
-        }
-
-        /// <summary>
-        ///     Returns the MIME type of the specified image.
-        /// </summary>
-        /// <param name="image">The image.</param>
-        /// <returns>A mime type string.</returns>
-        public static string GetMimeType(Image image)
-        {
-            Require<ArgumentNullException>(image != null, "image");
-
-            foreach (ImageCodecInfo codec in ImageCodecInfo.GetImageDecoders())
-            {
-                if (codec.FormatID == image.RawFormat.Guid)
-                {
-                    return codec.MimeType;
-                }
-            }
-
-            return "image/unknown";
-        }
-
-        /// <summary>
-        ///     Gets the image from the specified stream without retaining a file lock on the
-        ///     stream source.
-        /// </summary>
-        /// <param name="stream">The stream.</param>
-        /// <returns>An image.</returns>
-        public static Image GetNonLockingImageFromStream(Stream stream)
-        {
-            Require<ArgumentNullException>(stream != null, "stream");
-
-            // After copying the file stream to a memory stream, the file stream can be closed
-            // without disposing the image first, which would be necessary when using the file
-            // stream directly.
-            MemoryStream memoryStream = new MemoryStream();
-            stream.CopyTo(memoryStream);
-
-            return Image.FromStream(memoryStream);
-        }
-
-        /// <summary>
-        ///     Gets the image from the specified file without retaining a lock on the file.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns>An image.</returns>
-        public static Image GetNonLockingImageFromFile(string path)
-        {
-            Require<ArgumentException>(!string.IsNullOrWhiteSpace(path), "path", ArgumentException_CannotBeNullOrEmptyOrWhitespaceOnlyString);
-
-            if (!File.Exists(path))
-            {
-                throw new ArgumentException(ArgumentException_PathDoesNotExist, "path");
-            }
-
-            using (FileStream fileStream = File.OpenRead(path))
-            {
-                MemoryStream memoryStream = new MemoryStream();
-                fileStream.CopyTo(memoryStream);
-
-                return Image.FromStream(memoryStream);
-            }
-        }
-
-        /// <summary>
         ///     Draws bars to conceil the empty space that appears after resizing an image to
         ///     dimensions that have a different aspect ratio.
         /// </summary>
@@ -479,30 +322,6 @@ namespace Subspace.Imaging
             {
                 graphics.FillRectangle(barBrush, 0, 0, renderLeft, outputHeight);
                 graphics.FillRectangle(barBrush, renderLeft + renderWidth, 0, outputWidth - renderWidth - renderLeft, outputHeight);
-            }
-        }
-
-        /// <summary>
-        ///     Throws an exception of the specified type if the specified condition is false.
-        /// </summary>
-        /// <typeparam name="TException">The type of the exception.</typeparam>
-        /// <param name="condition">The condition.</param>
-        /// <param name="argumentName">The name of the argument, if applicable for the specified exception.</param>
-        /// <param name="message">The message.</param>
-        private static void Require<TException>(bool condition, string argumentName = null, string message = null)
-            where TException : Exception, new()
-        {
-            if (!condition)
-            {
-                if (argumentName == null)
-                {
-                    throw (Exception)Activator.CreateInstance(typeof(TException), message ?? string.Empty);
-                }
-
-                throw (Exception)Activator.CreateInstance(
-                    typeof(TException),
-                    message ?? string.Empty,
-                    argumentName);
             }
         }
     }

@@ -41,8 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Check.cs" />
     <Compile Include="ImageResizeMode.cs" />
     <Compile Include="ImageResizingUtils.cs" />
+    <Compile Include="ImageUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
