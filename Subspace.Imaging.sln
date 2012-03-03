@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subspace.Imaging", "src\Subspace.Imaging\Subspace.Imaging.csproj", "{C61FDB73-88E5-4697-B54A-0C5F7FBE5A3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C61FDB73-88E5-4697-B54A-0C5F7FBE5A3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C61FDB73-88E5-4697-B54A-0C5F7FBE5A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C61FDB73-88E5-4697-B54A-0C5F7FBE5A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C61FDB73-88E5-4697-B54A-0C5F7FBE5A3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
