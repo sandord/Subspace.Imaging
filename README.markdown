@@ -11,7 +11,7 @@ equal to the specified dimensions and bars may be added in order to extend the
 image when the aspect ratio of the specified dimensions does not match the aspect
 ratio of the image.
 
-**ExtendScaled**
+**Extend Scaled**
    
 Scales the image to fit within the specified dimensions. Images that are larger
 than the specified dimensions are shrunk while images that are smaller are
@@ -45,7 +45,7 @@ Resizes the image ensuring that the output width equals the specified width. The
 height of the image varies depending on the aspect ratio of the image. The aspect
 ratio of the image is maintained.
 
-**FixHeight**
+**Fix Height**
 
 Resizes the image ensuring that the output height equals the specified height. The
 width of the image varies depending on the aspect ratio of the image. The aspect
