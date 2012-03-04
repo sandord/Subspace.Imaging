@@ -11,7 +11,7 @@ namespace Subspace.Imaging
     /// <summary>
     ///     Contains methods that perform condition checking.
     /// </summary>
-    public static class Check
+    internal static class Check
     {
         /// <summary>
         ///     Throws an exception of the specified type if the specified condition is false.
@@ -20,7 +20,7 @@ namespace Subspace.Imaging
         /// <param name="condition">The condition.</param>
         /// <param name="argumentName">The name of the argument, if applicable for the specified exception.</param>
         /// <param name="message">The message.</param>
-        public static void Require<TException>(bool condition, string argumentName = null, string message = null)
+        internal static void Require<TException>(bool condition, string argumentName = null, string message = null)
             where TException : Exception, new()
         {
             if (!condition)
