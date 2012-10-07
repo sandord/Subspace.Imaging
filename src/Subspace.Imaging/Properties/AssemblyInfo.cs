@@ -43,7 +43,7 @@ using System.Runtime.InteropServices;
 //   Minor:      Should match the AssemblyVersion.
 //   Build:      The build number: alpha=1000, beta=2000, RC=3000, RTM=4000
 //   Revision:   Should increment whenever the assembly differs from the previous build.
-[assembly: AssemblyFileVersion("1.0.4000.1")]
+[assembly: AssemblyFileVersion("1.0.4000.2")]
 
 // Informational version:
 //  {major.minor build-name}
@@ -51,4 +51,4 @@ using System.Runtime.InteropServices;
 //   Major:      Should match the AssemblyVersion.
 //   Minor:      Should match the AssemblyVersion.
 //   Build-name: The build name: Alpha, Beta, RC or RTM.
-[assembly: AssemblyInformationalVersion("1.0 RTM")]
+[assembly: AssemblyInformationalVersion("1.1 RTM")]
